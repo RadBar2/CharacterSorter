@@ -1,27 +1,27 @@
 # Overview
 Transitive Character Ranking Calculator based on a Directed Acyclic Graph (DAG) ADT. This structure handles transitive relations (if A > B and B > C, then A > C).
 
-# UML Diagram
+## UML Diagram
 ```mermaid
 classDiagram
     %% Main class
     class CharacterRankDAG {
-        - Impl* pImpl
+        - Impl_ptr pImpl
         + CharacterRankDAG()
         + CharacterRankDAG(const CharacterRankDAG&)
         + operator=(const CharacterRankDAG&)
         + ~CharacterRankDAG()
-        + createCharacter(string)
-        + readCharacter(string) const
-        + updateCharacter(string, string)
-        + deleteCharacter(string)
-        + addRelation(string, string)
-        + removeRelation(string, string)
-        + operator+=(string)
-        + operator-=(string)
-        + operator*=(pair<string,string>)
-        + operator%=(pair<string,string>)
-        + operator[](string) const : bool
+        + createCharacter(String)
+        + readCharacter(String) const
+        + updateCharacter(String, String)
+        + deleteCharacter(String)
+        + addRelation(String, String)
+        + removeRelation(String, String)
+        + operator+=(String)
+        + operator-=(String)
+        + operator*=(PairString)
+        + operator%=(PairString)
+        + operator[](String) const : bool
         + operator!()
         + operator==(CharacterRankDAG) const : bool
         + operator!=(CharacterRankDAG) const : bool
@@ -29,14 +29,14 @@ classDiagram
         + operator<=(CharacterRankDAG) const : bool
         + operator>(CharacterRankDAG) const : bool
         + operator>=(CharacterRankDAG) const : bool
-        + toString() const : string
+        + toString() const : String
     }
 
     %% Impl class
     class Impl {
-        - nodes : set<string>
-        - edges : map<string, set<string>>
-        - directEdges : map<string, set<string>>
+        - nodes : SetString
+        - edges : MapStringSet
+        - directEdges : MapStringSet
         - hasPath(a,b) : bool
         - enforceAcyclic(a,b)
         - recomputeTransitiveClosure()
@@ -45,17 +45,20 @@ classDiagram
 
     %% Exception class
     class RankingException {
-        + RankingException(string msg)
+        + RankingException(String msg)
     }
 
+    %% Placeholder for runtime_error
+    class RuntimeError
+
     %% Inheritance
-    RankingException --|> std::runtime_error
+    RankingException --|> RuntimeError
 
     %% Composition / Pimpl relationship
     CharacterRankDAG --> Impl : uses / pImpl
 ```
 
-# Make options
+## Make options
 - make -f makefile.txt            builds default target (module + demo)
 - make -f makefile.txt run-demo   runs demo
 - make -f makefile.txt run-test   runs test
