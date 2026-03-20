@@ -11,7 +11,7 @@ DEMO_SRC = demo.cpp
 DEMO_EXE = demo
 
 TEST_SRC = test.cpp
-TEST_EXE = test_program
+TEST_EXE = test
 
 # Default target: build module and demo
 all: $(MODULE_OBJ) $(DEMO_EXE)
