@@ -59,11 +59,23 @@ classDiagram
 ```
 
 ## Make options
-- make -f makefile.txt            builds default target (module + demo)
-- make -f makefile.txt run-demo   runs demo
-- make -f makefile.txt run-test   runs test
-- make -f makefile.txt clean      cleans all
-- make -f makefile.txt rebuild    rebuilds from scratch
-
-
-
+1. **Build default target (module + demo)**
+   ```bash
+   make -f makefile.txt
+   ```
+2. **Run Demo**
+   ```bash
+   make -f makefile.txt run-demo
+   ```
+3. **Run Test**
+   ```bash
+   make -f makefile.txt run-test
+   ``` 
+4. **Cleans Everything**
+   ```bash
+   make -f makefile.txt clean
+   ``` 
+5. **Rebuilds from scratch**
+   ```bash
+   make -f makefile.txt rebuild
+   ``` 
