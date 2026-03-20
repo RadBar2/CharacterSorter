@@ -152,7 +152,6 @@ int main() {
     // Redirect output to both console AND file
     std::ofstream logFile("log.txt");
     std::streambuf* coutBuf = std::cout.rdbuf();
-
     std::cout.rdbuf(logFile.rdbuf());
 
     std::cout << "=== TESTING CharacterRankDAG ===\n\n";
@@ -170,6 +169,11 @@ int main() {
     testToString();
 
     std::cout << "\n=== TESTING COMPLETE ===\n";
+
+    // Flush and close log
+    logFile.flush();
+    logFile.close();
+
 
     // Restore console output
     std::cout.rdbuf(coutBuf);
