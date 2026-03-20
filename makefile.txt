@@ -1,0 +1,47 @@
+# Compiler and flags
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2
+
+# Files
+MODULE_SRC = CharacterRankDAG.cpp
+MODULE_HDR = CharacterRankDAG.h
+MODULE_OBJ = CharacterRankDAG.o
+
+DEMO_SRC = demo.cpp
+DEMO_EXE = demo
+
+TEST_SRC = test.cpp
+TEST_EXE = test
+
+# Default target: build module and demo
+all: $(MODULE_OBJ) $(DEMO_EXE)
+
+# Build module object file from .cpp and .h
+$(MODULE_OBJ): $(MODULE_SRC) $(MODULE_HDR)
+	$(CXX) $(CXXFLAGS) -c $(MODULE_SRC) -o $(MODULE_OBJ)
+
+# Build demo executable
+$(DEMO_EXE): $(DEMO_SRC) $(MODULE_OBJ)
+	$(CXX) $(CXXFLAGS) $(DEMO_SRC) $(MODULE_OBJ) -o $(DEMO_EXE)
+
+# Build test executable
+$(TEST_EXE): $(TEST_SRC) $(MODULE_OBJ)
+	$(CXX) $(CXXFLAGS) $(TEST_SRC) $(MODULE_OBJ) -o $(TEST_EXE)
+
+# Run demo
+run-demo: $(DEMO_EXE)
+	./$(DEMO_EXE)
+
+# Run test
+run-test: $(TEST_EXE)
+	./$(TEST_EXE)
+
+# Clean generated files
+clean:
+	rm -f $(MODULE_OBJ) $(DEMO_EXE) $(TEST_EXE)
+
+# Rebuild from scratch
+rebuild: clean all
+
+# Phony targets
+.PHONY: all run-demo run-test clean rebuild

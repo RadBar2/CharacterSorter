@@ -1,0 +1,17 @@
+=== TESTING CharacterRankDAG ===
+
+Create + Read existing: PASS
+Read non-existing: PASS
+Duplicate insert throws: PASS
+Add relation A > B: PASS
+Invalid relation throws: PASS
+Cycle detection: PASS
+Update character name: PASS
+Delete character: PASS
+Remove relation: PASS
+Clear operator: PASS
+Operator ==: PASS
+Operator !=: PASS
+toString not empty: PASS
+
+=== TESTING COMPLETE ===
