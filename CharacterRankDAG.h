@@ -6,21 +6,44 @@
 #include <stdexcept>
 #include <memory>
 
-namespace ranking {
+namespace Ranking {
 
-    // Custom Exception
     class RankingException : public std::runtime_error {
     public:
         explicit RankingException(const std::string& msg) : std::runtime_error(msg) {}
     };
 
     class CharacterRankDAG {
+    private:
+        // --- 1. Fields & Internal Types ---
+        class Impl; 
+        std::unique_ptr<Impl> pImpl; 
+
     public:
+        // --- 2. Constructors & Destructor ---
         CharacterRankDAG();
         CharacterRankDAG(const CharacterRankDAG& other);
         CharacterRankDAG& operator=(const CharacterRankDAG& other);
         ~CharacterRankDAG();
 
+        // --- 3. Operator Overloads ---
+        CharacterRankDAG& operator+=(const std::string& name);                          
+        CharacterRankDAG& operator-=(const std::string& name);                          
+        CharacterRankDAG& operator=(std::pair<std::string, std::string> rel);           
+        CharacterRankDAG& operator*=(const std::pair<std::string, std::string>& names); 
+        CharacterRankDAG& operator%=(std::pair<std::string, std::string> rel);          
+        bool operator[](const std::string& name) const;                                 
+        void operator!();                                                               
+
+        // Comparison Operators
+        bool operator==(const CharacterRankDAG& other) const;
+        bool operator!=(const CharacterRankDAG& other) const;
+        bool operator<(const CharacterRankDAG& other) const;
+        bool operator<=(const CharacterRankDAG& other) const;
+        bool operator>(const CharacterRankDAG& other) const;
+        bool operator>=(const CharacterRankDAG& other) const;
+
+        // --- 4. Other Methods ---
         // CRUD Operations
         void createCharacter(const std::string& name);
         bool readCharacter(const std::string& name) const;
@@ -31,31 +54,9 @@ namespace ranking {
         void addRelation(const std::string& superior, const std::string& subordinate);
         void removeRelation(const std::string& superior, const std::string& subordinate);
 
-        // Operator Overloads
-        CharacterRankDAG& operator+=(const std::string& name);                          // Create
-        CharacterRankDAG& operator-=(const std::string& name);                          // Delete
-        CharacterRankDAG& operator=(std::pair<std::string, std::string> rel);           // Add Relation
-        CharacterRankDAG& operator*=(const std::pair<std::string, std::string>& names); // Update Character
-        CharacterRankDAG& operator%=(std::pair<std::string, std::string> rel);          // Remove Relation
-        bool operator[](const std::string& name) const;                                 // Search
-        void operator!();                                                               // Clear
-
-        // Comparison Operators
-        bool operator==(const CharacterRankDAG& other) const;
-        bool operator!=(const CharacterRankDAG& other) const;
-        bool operator<(const CharacterRankDAG& other) const;
-        bool operator<=(const CharacterRankDAG& other) const;
-        bool operator>(const CharacterRankDAG& other) const;
-        bool operator>=(const CharacterRankDAG& other) const;
-
-        std::string toString() const;
-
-        // Methods
+        // Logic & Conversion
         std::vector<std::string> getRanking() const;
-
-    private:
-        class Impl; 
-        std::unique_ptr<Impl> pImpl; // The Pimpl pointer
+        std::string toString() const;
     };
 }
 
