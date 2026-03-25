@@ -1,7 +1,7 @@
 #include <iostream>
 #include "CharacterRankDAG.h"
 
-using namespace ranking;
+using namespace Ranking;
 
 int main() {
     std::cout << "CharacterRankDAG Demo\n\n";

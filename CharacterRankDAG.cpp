@@ -8,7 +8,7 @@
 
 namespace Ranking {
 
-    // --- 1. Internal "Fields" (The Impl Class) ---
+    // --- 1. Internal Fields (The Impl Class) ---
     class CharacterRankDAG::Impl {
     public:
         std::set<std::string> nodes;
@@ -77,14 +77,6 @@ namespace Ranking {
     }
     CharacterRankDAG& CharacterRankDAG::operator-=(const std::string& name) {
         deleteCharacter(name); 
-        return *this;
-    }
-    CharacterRankDAG& CharacterRankDAG::operator*=(const std::pair<std::string, std::string>& names) {
-        updateCharacter(names.first, names.second);
-        return *this;
-    }
-    CharacterRankDAG& CharacterRankDAG::operator%=(std::pair<std::string, std::string> rel) {
-        removeRelation(rel.first, rel.second);
         return *this;
     }
     bool CharacterRankDAG::operator[](const std::string& name) const {
