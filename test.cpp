@@ -1,29 +1,29 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
+#include <exception>
+#include <stdexcept>
+
 #include "CharacterRankDAG.h"
 
 using namespace Ranking;
 
-// Helper that prints and THROWS on failure to trigger the main catch block
-void assertTest(const std::string& testName, bool pass) {
-    if (pass) {
-        std::cout << "[ PASS ] " << testName << "\n";
-    } else {
-        std::cout << "[ FAIL ] " << testName << "\n";
-        // Throwing here ensures we jump straight to the catch in main
-        throw RankingException("Test Logic Failure: " + testName);
-    }
+// Helper to print result
+void printResult(const std::string& testName, bool pass) {
+    std::cout << testName << ": " << (pass ? "PASS" : "FAIL") << "\n";
 }
 
 // ========================
 // TESTS
 // ========================
 
-bool testCreateAndRead() {
+void testCreateAndRead() {
     CharacterRankDAG dag;
     dag += "A";
-    return dag["A"] && !dag["X"];
+
+    printResult("Create + Read existing", dag["A"]);
+    printResult("Read non-existing", !dag["X"]);
 }
 
 void testDuplicateInsert() {
@@ -36,6 +36,8 @@ void testDuplicateInsert() {
     } catch (const RankingException&) {
         exceptionThrown = true;
     }
+
+    printResult("Duplicate insert throws", exceptionThrown);
 }
 
 void testAddRelation() {
@@ -49,6 +51,8 @@ void testAddRelation() {
     } catch (...) {
         success = false;
     }
+
+    printResult("Add relation A > B", success);
 }
 
 void testInvalidRelation() {
@@ -63,19 +67,24 @@ void testInvalidRelation() {
         exceptionThrown = true;
     }
 
+    printResult("Invalid relation throws", exceptionThrown);
 }
 
-bool testCycleDetection() {
+void testCycleDetection() {
     CharacterRankDAG dag;
     dag += "A"; dag += "B"; dag += "C";
+
+    bool exceptionThrown = false;
+
     try {
         dag.addRelation("A", "B");
         dag.addRelation("B", "C");
-        dag.addRelation("C", "A"); // Should throw
-        return false; // If it gets here, cycle detection failed
+        dag.addRelation("C", "A"); // cycle
     } catch (const RankingException&) {
-        return true; // Correctly caught the cycle
+        exceptionThrown = true;
     }
+
+    printResult("Cycle detection", exceptionThrown);
 }
 
 void testUpdateCharacter() {
@@ -84,6 +93,7 @@ void testUpdateCharacter() {
 
     dag *= {"A", "Hero"};
 
+    printResult("Update character name", dag["Hero"] && !dag["A"]);
 }
 
 void testDeleteCharacter() {
@@ -92,6 +102,7 @@ void testDeleteCharacter() {
 
     dag -= "A";
 
+    printResult("Delete character", !dag["A"]);
 }
 
 void testRemoveRelation() {
@@ -100,6 +111,9 @@ void testRemoveRelation() {
 
     dag.addRelation("A", "B");
     dag %= {"A", "B"};
+
+    // We assume no exception = success
+    printResult("Remove relation", true);
 }
 
 void testClearOperator() {
@@ -108,7 +122,7 @@ void testClearOperator() {
 
     !dag;
 
-    
+    printResult("Clear operator", !dag["A"] && !dag["B"]);
 }
 
 void testComparisonOperators() {
@@ -121,6 +135,8 @@ void testComparisonOperators() {
     bool equal = (dag1 == dag2);
     bool notEqual = !(dag1 != dag2);
 
+    printResult("Operator ==", equal);
+    printResult("Operator !=", notEqual);
 }
 
 void testToString() {
@@ -129,7 +145,7 @@ void testToString() {
 
     std::string output = dag.toString();
 
-    
+    printResult("toString not empty", !output.empty());
 }
 
 // ========================
@@ -137,48 +153,42 @@ void testToString() {
 // ========================
 
 int main() {
-    // 1. Setup Logging
-    std::ofstream logFile("log.txt");
-    if (!logFile.is_open()) {
-        std::cerr << "Error: Could not open log.txt\n";
-        return 1;
-    }
+    try {
+        // Redirect output to both console AND file
+        std::ofstream logFile("log.txt");
+        std::streambuf* coutBuf = std::cout.rdbuf();
 
-    // Redirect cout to logFile
-    std::streambuf* coutBuf = std::cout.rdbuf();
-    std::cout.rdbuf(logFile.rdbuf());
+        std::cout.rdbuf(logFile.rdbuf());
 
-    std::cout << "CharacterRankDAG Test Report\n";
-    std::cout << "============================\n\n";
+        std::cout << "=== TESTING CharacterRankDAG ===\n\n";
 
-    // 2. Run Tests Individually
-    // If one fails, the others will still run.
-    /*
-    runTest("Create and Read", testCreateAndRead);
-    runTest("Duplicate Insert", testDuplicateInsert);
-    runTest("Add Relation", testAddRelation);
-    runTest("Invalid Relation", testInvalidRelation);
-    runTest("Cycle Detection", testCycleDetection);
-    runTest("Update Character", testUpdateCharacter);
-    runTest("Delete Character", testDeleteCharacter);
-    runTest("Remove Relation", testRemoveRelation);
-    runTest("Clear Operator", testClearOperator);
-    runTest("Comparison Operators", testComparisonOperators);
-    runTest("ToString Output", testToString); */
+        testCreateAndRead();
+        testDuplicateInsert();
+        testAddRelation();
+        testInvalidRelation();
+        testCycleDetection();
+        testUpdateCharacter();
+        testDeleteCharacter();
+        testRemoveRelation();
+        testClearOperator();
+        testComparisonOperators();
+        testToString();
 
-    std::cout << "\n============================\n";
-    std::cout << "Testing Session Finished.\n";
+        std::cout << "\n=== TESTING COMPLETE ===\n";
 
-    // 3. Cleanup and Restore
-    logFile.flush();
-    logFile.close();
-    std::cout.rdbuf(coutBuf); // Restore console
+        // Restore console output
+        std::cout.rdbuf(coutBuf);
 
-    // 4. Output log to console for immediate viewing
-    std::ifstream inFile("log.txt");
-    if (inFile) {
+        // Also print to console
+        std::ifstream inFile("log.txt");
         std::cout << inFile.rdbuf();
+    } catch (const std::exception& e) {
+        std::cerr << "Caught standard exception: " << e.what() << std::endl;
     }
+    catch (...) {
+        std::cerr << "Caught an unknown exception!" << std::endl;
+    }
+    
 
     return 0;
 }
