@@ -197,10 +197,30 @@ namespace Ranking {
     }
 
     std::string CharacterRankDAG::toString() const {
+        size_t edgeCount = 0;
+        for (const auto& pair : pImpl->directEdges) {
+            edgeCount += pair.second.size();
+        }
+
         std::stringstream ss;
-        auto ranking = getRanking();
-        ss << "Ranking:\n";
-        for (const auto& name : ranking) ss << name << "\n";
+        ss << "CharacterRankDAG Overview:"
+            << "\n  Total Characters: " << pImpl->nodes.size()
+            << "\n  Direct Relations: " << edgeCount;
+
+        if (!pImpl->nodes.empty()) {
+            try {
+                auto ranking = getRanking();
+                ss << "\n  Root(s): " << ranking.front();
+                if (ranking.size() > 1) {
+                    ss << "\n  Leaf(s): " << ranking.back();
+                }
+            } catch (const RankingException&) {
+                ss << "\n  Status: INVALID (Cycle Detected)";
+            }
+        } else {
+            ss << "\n  Status: Empty";
+        }
+
         return ss.str();
     }
 }
