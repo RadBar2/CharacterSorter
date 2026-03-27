@@ -16,11 +16,17 @@ namespace Ranking {
         std::map<std::string, std::set<std::string>> directEdges;
 
         bool hasPath(const std::string& start, const std::string& end) const {
-            if (edges.find(start) == edges.end()) return false;
-            if (edges.at(start).count(end)) return true;
+            if (edges.find(start) == edges.end()) {
+                return false;
+            }
+            if (edges.at(start).count(end)) {
+                return true;
+            }
 
             for (const auto& neighbor : edges.at(start)) {
-                if (hasPath(neighbor, end)) return true;
+                if (hasPath(neighbor, end)) {
+                    return true;
+                }
             }
             return false;
         }
@@ -46,7 +52,9 @@ namespace Ranking {
         void dfs(const std::string& origin, const std::string& current,
                  std::set<std::string>& visited,
                  std::map<std::string, std::set<std::string>>& newEdges) const {
-            if (!edges.count(current)) return;
+            if (!edges.count(current)) {
+                return;
+            }
             for (const auto& neighbor : edges.at(current)) {
                 if (!visited.count(neighbor)) {
                     visited.insert(neighbor);
@@ -64,7 +72,9 @@ namespace Ranking {
         : pImpl(std::make_unique<Impl>(*other.pImpl)) {}
     
     CharacterRankDAG& CharacterRankDAG::operator=(const CharacterRankDAG& other) {
-        if (this != &other) pImpl = std::make_unique<Impl>(*other.pImpl);
+        if (this != &other) {
+            pImpl = std::make_unique<Impl>(*other.pImpl);
+        }
         return *this;
     }
     
@@ -96,7 +106,9 @@ namespace Ranking {
         return !(*this == other);
     }
     bool CharacterRankDAG::operator<(const CharacterRankDAG& other) const {
-        if (pImpl->nodes != other.pImpl->nodes) return pImpl->nodes < other.pImpl->nodes;
+        if (pImpl->nodes != other.pImpl->nodes) {
+            return pImpl->nodes < other.pImpl->nodes;
+        }
         return pImpl->edges < other.pImpl->edges;
     }
     bool CharacterRankDAG::operator<=(const CharacterRankDAG& other) const {
@@ -111,7 +123,9 @@ namespace Ranking {
 
     // --- 4. Named Methods (CRUD & Logic) ---
     void CharacterRankDAG::createCharacter(const std::string& name) {
-        if (pImpl->nodes.count(name)) throw RankingException("Character already exists.");
+        if (pImpl->nodes.count(name)) {
+            throw RankingException("Character already exists.");
+        }
         pImpl->nodes.insert(name);
     }
 
@@ -120,8 +134,12 @@ namespace Ranking {
     }
 
     void CharacterRankDAG::updateCharacter(const std::string& oldName, const std::string& newName) {
-        if (!pImpl->nodes.count(oldName)) throw RankingException("Character not found.");
-        if (pImpl->nodes.count(newName)) throw RankingException("New name already exists.");
+        if (!pImpl->nodes.count(oldName)) {
+            throw RankingException("Character not found.");
+        }
+        if (pImpl->nodes.count(newName)) {
+            throw RankingException("New name already exists.");
+        }
 
         // Update logic
         pImpl->nodes.erase(oldName);
@@ -143,7 +161,9 @@ namespace Ranking {
     }
 
     void CharacterRankDAG::deleteCharacter(const std::string& name) {
-        if (!pImpl->nodes.count(name)) throw RankingException("Character not found.");
+        if (!pImpl->nodes.count(name)) {
+            throw RankingException("Character not found.");
+        }
         
         pImpl->nodes.erase(name);
         pImpl->directEdges.erase(name);
@@ -173,13 +193,19 @@ namespace Ranking {
 
     std::vector<std::string> CharacterRankDAG::getRanking() const {
         std::map<std::string, int> inDegree;
-        for (const auto& node : pImpl->nodes) inDegree[node] = 0;
+        for (const auto& node : pImpl->nodes) {
+            inDegree[node] = 0;
+        }
         for (const auto& pair : pImpl->directEdges) {
             for (const auto& neighbor : pair.second) inDegree[neighbor]++;
         }
 
         std::queue<std::string> q;
-        for (const auto& pair : inDegree) if (pair.second == 0) q.push(pair.first);
+        for (const auto& pair : inDegree) {
+            if (pair.second == 0) {
+                q.push(pair.first);
+            } 
+        }
 
         std::vector<std::string> result;
         while (!q.empty()) {
@@ -187,12 +213,16 @@ namespace Ranking {
             result.push_back(current);
             if (pImpl->directEdges.count(current)) {
                 for (const auto& neighbor : pImpl->directEdges.at(current)) {
-                    if (--inDegree[neighbor] == 0) q.push(neighbor);
+                    if (--inDegree[neighbor] == 0) {
+                        q.push(neighbor);
+                    }
                 }
             }
         }
 
-        if (result.size() != pImpl->nodes.size()) throw RankingException("Cycle detected.");
+        if (result.size() != pImpl->nodes.size()) {
+            throw RankingException("Cycle detected.");
+        }
         return result;
     }
 
