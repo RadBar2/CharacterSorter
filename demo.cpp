@@ -58,16 +58,17 @@ int main() {
     dag2 += "B";
     dag2 += "C";
 
-    if (dag == dag2)
+    if (dag == dag2) {
         std::cout << "dag == dag2\n";
-    else
+    } else {
         std::cout << "dag != dag2\n";
+    }
 
-    if (dag < dag2)
+    if (dag < dag2) {
         std::cout << "dag < dag2\n";
-    else
+    } else {
         std::cout << "dag >= dag2\n";
-
+    }
     std::cout << "\n";
 
     // Clear (!)
