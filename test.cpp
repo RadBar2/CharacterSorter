@@ -110,7 +110,7 @@ void testRemoveRelation() {
     dag += "A"; dag += "B";
 
     dag.addRelation("A", "B");
-    dag %= {"A", "B"};
+    dag.removeRelation("A", "B");
 
     // We assume no exception = success
     printResult("Remove relation", true);

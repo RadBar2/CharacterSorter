@@ -89,6 +89,10 @@ namespace Ranking {
         deleteCharacter(name); 
         return *this;
     }
+    CharacterRankDAG& CharacterRankDAG::operator*=(const std::pair<std::string, std::string>& names) {
+        updateCharacter(names.first, names.second);
+        return *this;
+    }
     bool CharacterRankDAG::operator[](const std::string& name) const {
         return readCharacter(name);
     }
@@ -143,18 +147,18 @@ namespace Ranking {
 
         // Update logic
         pImpl->nodes.erase(oldName);
-        pImpl->nodes.insert(newName);
+        pImpl->nodes.insert(oldName);
 
         auto it = pImpl->directEdges.find(oldName);
         if (it != pImpl->directEdges.end()) {
-            pImpl->directEdges[newName] = std::move(it->second);
+            pImpl->directEdges[oldName] = std::move(it->second);
             pImpl->directEdges.erase(it);
         }
 
         for (auto& pair : pImpl->directEdges) {
             if (pair.second.count(oldName)) {
                 pair.second.erase(oldName);
-                pair.second.insert(newName);
+                pair.second.insert(oldName);
             }
         }
         pImpl->recomputeTransitiveClosure();
