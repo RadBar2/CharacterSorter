@@ -38,7 +38,7 @@ int main() {
 
     // Remove Relation (%=)
     std::cout << "[REMOVE RELATION]\n";
-    dag %= {"Hero", "B"};
+    dag.removeRelation("Hero", "B");
     std::cout << "Removed relation Hero > B\n\n";
 
     // Delete (-= / deleteCharacter)
